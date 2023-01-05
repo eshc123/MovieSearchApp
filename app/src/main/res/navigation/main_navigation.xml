@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/movieFragment">
+
+    <fragment
+        android:id="@+id/movieFragment"
+        android:name="com.eshc.moviesearchapp.ui.movie.MovieFragment"
+        android:label="MovieFragment" >
+        <action
+            android:id="@+id/action_movieFragment_to_recentFragment"
+            app:destination="@id/recentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recentFragment"
+        android:name="com.eshc.moviesearchapp.ui.recent.RecentFragment"
+        android:label="RecentFragment" />
+</navigation>

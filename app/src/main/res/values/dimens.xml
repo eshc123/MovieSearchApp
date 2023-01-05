@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="movie_item_image_size">100dp</dimen>
+
+    <dimen name="margin_size_1">1dp</dimen>
+    <dimen name="margin_size_4">4dp</dimen>
+    <dimen name="margin_size_8">8dp</dimen>
+    <dimen name="margin_size_16">16dp</dimen>
+    <dimen name="margin_size_24">24dp</dimen>
+    <dimen name="radius_size_8">8dp</dimen>
+
+    <dimen name="text_size_16">16sp</dimen>
+</resources>
