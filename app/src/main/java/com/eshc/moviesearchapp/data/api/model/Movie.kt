@@ -7,5 +7,6 @@ data class Movie(
     val userRating : Float,
     val subtitle : String,
     val director : String,
-    val actor : String
+    val actor : String,
+    val link : String
 )
