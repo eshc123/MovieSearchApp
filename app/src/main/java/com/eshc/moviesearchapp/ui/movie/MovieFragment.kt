@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.eshc.moviesearchapp.R
 import com.eshc.moviesearchapp.databinding.FragmentMovieBinding
 import com.eshc.moviesearchapp.ui.adapter.MovieAdapter
 
@@ -42,6 +44,9 @@ class MovieFragment : Fragment() {
     private fun initView(){
         binding?.let {
             initRecyclerView(it.rvMovie)
+            it.btnRecent.setOnClickListener {
+                moveToRecentFragment()
+            }
         }
     }
 
@@ -61,6 +66,12 @@ class MovieFragment : Fragment() {
                 Intent.ACTION_VIEW,
                 Uri.parse(link)
             )
+        )
+    }
+
+    private fun moveToRecentFragment() {
+        findNavController().navigate(
+            R.id.action_movieFragment_to_recentFragment
         )
     }
 }
