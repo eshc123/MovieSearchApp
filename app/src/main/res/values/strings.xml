@@ -7,4 +7,8 @@
     <string name="movie_recent">최근검색</string>
 
     <string name="recent_history">최근 검색 이력</string>
+
+    <string name="movie_item_title">제목 : %s</string>
+    <string name="movie_item_date">출시 : %s</string>
+    <string name="movie_item_rating">평점 : %f</string>
 </resources>
