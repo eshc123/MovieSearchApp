@@ -22,6 +22,8 @@
             android:minHeight="48dp"
             android:maxLines="1"
             android:textSize="@dimen/text_size_16"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
             app:layout_constraintEnd_toStartOf="@id/btn_search"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
