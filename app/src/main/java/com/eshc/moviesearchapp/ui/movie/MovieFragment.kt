@@ -64,9 +64,11 @@ class MovieFragment : Fragment() {
             moveToRecentFragment()
         }
         binding.btnSearch.setOnClickListener {
-            softKeyboardHide(requireContext(),binding.etSearch)
-            movieAdapter.submitList(emptyList())
-            viewModel.setMovies()
+            if(viewModel.query.value?.isNotBlank() == true) {
+                softKeyboardHide(requireContext(), binding.etSearch)
+                movieAdapter.submitList(emptyList())
+                viewModel.setMovies()
+            }
         }
     }
 
