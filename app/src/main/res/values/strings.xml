@@ -10,5 +10,5 @@
 
     <string name="movie_item_title">제목 : %s</string>
     <string name="movie_item_date">출시 : %s</string>
-    <string name="movie_item_rating">평점 : %f</string>
+    <string name="movie_item_rating">평점 : %.2f</string>
 </resources>
