@@ -2,7 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
             name="movie"
             type="com.eshc.moviesearchapp.ui.model.MovieUiModel" />
@@ -10,18 +10,28 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/movie_item_image_size"
+        android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_size_4">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_movie"
             android:layout_width="@dimen/movie_item_image_size"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/movie_item_image_size"
             app:imageUrl="@{movie.image}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1.3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_no_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/iv_movie"
+            app:layout_constraintStart_toStartOf="@id/iv_movie"
+            app:layout_constraintBottom_toBottomOf="@id/iv_movie"
+            app:layout_constraintEnd_toEndOf="@id/iv_movie"
+            android:visibility="@{movie.image.empty ? View.VISIBLE : View.INVISIBLE}"
+            android:text="@string/movie_item_no_image"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_title"

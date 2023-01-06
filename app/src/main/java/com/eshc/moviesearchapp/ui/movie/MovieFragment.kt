@@ -6,15 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eshc.moviesearchapp.R
 import com.eshc.moviesearchapp.databinding.FragmentMovieBinding
 import com.eshc.moviesearchapp.ui.adapter.MovieAdapter
-import com.eshc.moviesearchapp.ui.util.addPagingListener
+import com.eshc.moviesearchapp.ui.util.KeyboardUtil.softKeyboardHide
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,7 +24,7 @@ class MovieFragment : Fragment() {
     private var _binding: FragmentMovieBinding? = null
     private val binding get() = _binding
 
-    private val viewModel : MovieViewModel by viewModels()
+    private val viewModel : MovieViewModel by activityViewModels()
 
     private val movieAdapter : MovieAdapter by lazy {
         MovieAdapter(
@@ -52,6 +54,7 @@ class MovieFragment : Fragment() {
         binding?.let {
             it.viewModel = viewModel
             initRecyclerView(it.rvMovie)
+            initSetOnEditorActionListener(it.etSearch)
             initSetOnClickListener(it)
         }
     }
@@ -61,10 +64,26 @@ class MovieFragment : Fragment() {
             moveToRecentFragment()
         }
         binding.btnSearch.setOnClickListener {
-            movieAdapter.submitList(emptyList())
-            viewModel.setMovies()
+            if(viewModel.query.value?.isNotBlank() == true) {
+                softKeyboardHide(requireContext(), binding.etSearch)
+                movieAdapter.submitList(emptyList())
+                viewModel.setMovies()
+            }
         }
     }
+
+    private fun initSetOnEditorActionListener(editText: EditText) {
+        editText.setOnEditorActionListener { _, action, _ ->
+            if(action == EditorInfo.IME_ACTION_SEARCH){
+                softKeyboardHide(requireContext(),editText)
+                movieAdapter.submitList(emptyList())
+                viewModel.setMovies()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
 
     private fun initRecyclerView(recyclerView: RecyclerView){
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
@@ -73,8 +92,13 @@ class MovieFragment : Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.movies.observe(viewLifecycleOwner) {
-            movieAdapter.submitList(it)
+        viewModel.movies.observe(viewLifecycleOwner) { movies ->
+            movieAdapter.submitList(movies)
+        }
+        viewModel.loading.observe(viewLifecycleOwner) { loading ->
+            if(loading && viewModel.movies.value?.size == 0){
+                binding?.pbLoading?.visibility = View.VISIBLE
+            } else binding?.pbLoading?.visibility = View.INVISIBLE
         }
     }
 
@@ -100,7 +124,7 @@ class MovieFragment : Fragment() {
                 val lastVisibleItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 val itemTotalCount = recyclerView.adapter?.itemCount ?: 0
-                if (lastVisibleItemPosition + 5 >= itemTotalCount  && !viewModel.loading) {
+                if (lastVisibleItemPosition + 5 >= itemTotalCount  && viewModel.loading.value?.not() == true) {
                     viewModel.addMovies()
                 }
             }
