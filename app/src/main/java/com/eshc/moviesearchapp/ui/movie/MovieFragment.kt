@@ -90,8 +90,13 @@ class MovieFragment : Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.movies.observe(viewLifecycleOwner) {
-            movieAdapter.submitList(it)
+        viewModel.movies.observe(viewLifecycleOwner) { movies ->
+            movieAdapter.submitList(movies)
+        }
+        viewModel.loading.observe(viewLifecycleOwner) { loading ->
+            if(loading && viewModel.movies.value?.size == 0){
+                binding?.pbLoading?.visibility = View.VISIBLE
+            } else binding?.pbLoading?.visibility = View.INVISIBLE
         }
     }
 
@@ -117,7 +122,7 @@ class MovieFragment : Fragment() {
                 val lastVisibleItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 val itemTotalCount = recyclerView.adapter?.itemCount ?: 0
-                if (lastVisibleItemPosition + 5 >= itemTotalCount  && !viewModel.loading) {
+                if (lastVisibleItemPosition + 5 >= itemTotalCount  && viewModel.loading.value?.not() == true) {
                     viewModel.addMovies()
                 }
             }
