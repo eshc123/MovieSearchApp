@@ -69,7 +69,7 @@ class MovieViewModel @Inject constructor(
 
     private suspend fun getMoviesByQuery(): List<MovieUiModel> = withContext(Dispatchers.IO) {
         try {
-            movieRepository.getMoviesByQuery(query.value.toString(), page, pagingSize).getOrThrow()
+            movieRepository.getMoviesByQuery(getTrimmedQuery(), page, pagingSize).getOrThrow()
                 .let { channel ->
                     checkPagingEnded(channel.start, channel.total, pagingSize)
                     page += pagingSize
@@ -85,6 +85,9 @@ class MovieViewModel @Inject constructor(
         }
     }
 
+
+    private fun getTrimmedQuery() = query.value.toString().trim()
+
     private fun checkPagingEnded(start: Int, total: Int, pagingSize: Int) {
         pagingEnded = start + pagingSize >= total
     }
@@ -92,7 +95,7 @@ class MovieViewModel @Inject constructor(
     private suspend fun addRecent() {
         recentRepository.insertRecentEntity(
             RecentEntity(
-                query.value.toString(),
+                getTrimmedQuery(),
                 System.currentTimeMillis()
             )
         )
