@@ -37,11 +37,10 @@ class MovieViewModel @Inject constructor(
     private var page = 1
     private var pagingSize = 10
     private var pagingEnded = false
-    val loading = MutableLiveData<Boolean>(false)
+    val loading = MutableLiveData(false)
 
     fun setMovies() {
-        page = 1
-        pagingEnded = false
+        initPage()
         loading.value = true
         viewModelScope.launch {
             getMoviesByQuery().let { movieList ->
@@ -52,31 +51,33 @@ class MovieViewModel @Inject constructor(
     }
 
     fun addMovies() {
-        loading.value = true
-        viewModelScope.launch {
-            getMoviesByQuery().let { movieList ->
-                if (movieList.isNotEmpty()) _movies.value =
-                    (movies.value ?: emptyList()) + movieList
+        if (!pagingEnded) {
+            loading.value = true
+            viewModelScope.launch {
+                getMoviesByQuery().let { movieList ->
+                    if (movieList.isNotEmpty())
+                        _movies.value = (movies.value ?: emptyList()) + movieList
+                }
             }
         }
     }
 
+    private fun initPage() {
+        page = 1
+        pagingEnded = false
+    }
 
     private suspend fun getMoviesByQuery(): List<MovieUiModel> = withContext(Dispatchers.IO) {
         try {
-            if (pagingEnded.not()) {
-                movieRepository.getMoviesByQuery(query.value ?: "", page, pagingSize).getOrThrow()
-                    .let { channel ->
-                        checkPage(channel.start, channel.total, pagingSize)
-                        page += pagingSize
-                        channel.items
-                            .map { movie ->
-                                movie.toUiModel()
-                            }
-                    }
-            } else {
-                emptyList()
-            }
+            movieRepository.getMoviesByQuery(query.value.toString(), page, pagingSize).getOrThrow()
+                .let { channel ->
+                    checkPagingEnded(channel.start, channel.total, pagingSize)
+                    page += pagingSize
+                    channel.items
+                        .map { movie ->
+                            movie.toUiModel()
+                        }
+                }
         } catch (e: Exception) {
             emptyList()
         } finally {
@@ -84,7 +85,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    private fun checkPage(start: Int, total: Int, pagingSize: Int) {
+    private fun checkPagingEnded(start: Int, total: Int, pagingSize: Int) {
         pagingEnded = start + pagingSize >= total
     }
 
